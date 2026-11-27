@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/brand/omnisw-hero.png" width="100%" alt="OmniSolidWorks — Model. Assemble. Verify."></p>
+<p align="center"><img src="assets/brand/omnisw-precision-hero.svg" width="100%" alt="OmniSolidWorks — Model. Assemble. Verify."></p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-B87948?style=flat-square" alt="MIT"></a>
@@ -45,7 +45,7 @@ The independent acceptance case generated eight parametric part types, three dis
 
 [Folded](case-review/MultiStationCollapsed.png) · [Exploded](case-review/MultiStationExploded.png) · [Guide fixture A3 drawing](case-review/GuideFixtureDrawing.png) · [Guide fixture BOM](case-review/BOM.csv) · [Bearing block A2 section](case-review/BearingBlockA2.png)
 
-The banner and the six-station images show earlier native CAD evidence. The three-station gripper is the later independent acceptance case. Native document sets and raw COM logs remain in local validation storage.
+The six-station images show earlier native CAD evidence. The three-station gripper is the later independent acceptance case. Native document sets and raw COM logs remain in local validation storage.
 
 ## Evidence-Driven
 
