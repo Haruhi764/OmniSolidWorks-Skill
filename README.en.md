@@ -1,6 +1,6 @@
 <p align="center"><img src="assets/brand/omnisw-hero.png" width="100%" alt="OmniSolidWorks — Model. Assemble. Verify."></p>
 
-<p align="center"><a href="README.md">中文</a> · <a href="SKILL.md">Agent Skill</a> · <a href="ACCEPTANCE_REPORT.md">Validation</a> · <a href="ENVIRONMENT_COMPATIBILITY.md">Compatibility</a> · <a href="GB_RULE_COVERAGE.md">GB coverage</a></p>
+<p align="center"><a href="https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0"><strong>Download V1.0.0</strong></a> · <a href="#installation-and-use">Quick start</a> · <a href="README.md">中文</a> · <a href="SKILL.md">Agent Skill</a> · <a href="FINAL_ASSESSMENT.md">Validation</a></p>
 
 # OmniSolidWorks Skill
 
@@ -9,6 +9,14 @@
 A SolidWorks automation skill for Codex, using local COM/API to create parametric parts, hierarchical assemblies, exploded views and drawings with geometry, mates, BOM and reopen checks.
 
 > V1.0.0 uses RC3 as its technical baseline. Verified host: SolidWorks 2014 x64 SP0 (COM 22.0.0). Native route-line persistence remains experimental.
+
+## Core capabilities
+
+| Parametric modeling | Mechanical assembly | Engineering deliverables |
+| --- | --- | --- |
+| Native features, dimension edits and rebuilds | Nested assemblies, mates and explode steps | Drawings, sections, BOM, balloons and disassembly tables |
+
+The portfolio below shows actual SolidWorks outputs, not concept renders.
 
 ## Mechanical portfolio
 
@@ -54,6 +62,8 @@ RC2 scored 90/100. RC3's 24 unit tests, 113-file manifest verification and indep
 Checks drawing dimension chains, repeated spans, sheet bounds and BOM-to-balloon consistency, with an index of public GB standards metadata. See [rule coverage](GB_RULE_COVERAGE.md) for tolerances, surface finish and other manufacturing annotations.
 
 ## Installation and use
+
+Download and extract the official ZIP from [V1.0.0 Release](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0).
 
 Use Windows x64, Python 3.12+, Windows PowerShell 5.1 and a licensed SolidWorks installation. Open an empty SolidWorks session and run these commands from the extracted bundle. Choose a new local destination.
 
