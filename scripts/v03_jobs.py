@@ -19,6 +19,9 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "outputs" / "v0.3"
 MAX_JOB_BYTES = 4 * 1024 * 1024
 MAX_JOB_DEPTH = 32
+NATIVE_EXTENSIONS = {".sldprt", ".sldasm", ".slddrw"}
+MODERN_NATIVE_CONTAINER_VERSION = b"\x00\x00\x00\x04"
+MODERN_NATIVE_REVISION_PREFIX = "34."
 
 
 def decode_document(payload):
@@ -236,6 +239,29 @@ def dependency_path(job, folder, index, row):
     return anchor / f'{row["id"]}{Path(row["path"]).suffix.upper()}'
 
 
+def modern_native_reopen_proof(path, folder):
+    """A variable-prefix SW 2026 container also needs a matching native COM open."""
+    evidence_file = folder / "native.json"
+    if not evidence_file.is_file():
+        return False
+    evidence = load_job(evidence_file)
+    if not isinstance(evidence, dict) or evidence.get("status") != "PASS":
+        return False
+    revision = evidence.get("revision")
+    if not isinstance(revision, str) or not revision.startswith(MODERN_NATIVE_REVISION_PREFIX):
+        return False
+    expected = os.path.normcase(str(path.resolve()))
+    for key, opened in evidence.items():
+        if key != "nativeOpen" and not key.startswith("sourceOpen:"):
+            continue
+        if not isinstance(opened, dict) or opened.get("ok") is not True or opened.get("errors") != 0:
+            continue
+        source = opened.get("path")
+        if isinstance(source, str) and source and os.path.normcase(str(Path(source).resolve())) == expected:
+            return True
+    return False
+
+
 def artifact_rows(job, folder, root):
     paths = [folder / f'{job["outputs"]["name"]}.{kind.upper()}' for kind in job["outputs"]["formats"]]
     paths += [dependency_path(job, folder, index, row) for index, row in enumerate(job["dependencies"])]
@@ -252,7 +278,11 @@ def artifact_rows(job, folder, root):
                     stream.seek(max(0, path.stat().st_size - 100))
                     valid = stream.read().rstrip().endswith(b"EOF")
             else:
-                valid = stream.read(24).startswith(signatures[suffix])
+                header = stream.read(24)
+                valid = header.startswith(signatures[suffix])
+                if not valid and suffix in NATIVE_EXTENSIONS:
+                    valid = (header[4:8] == MODERN_NATIVE_CONTAINER_VERSION
+                             and modern_native_reopen_proof(path, folder))
             if not valid:
                 raise ValueError(f"Unexpected file signature for {path.name}")
         result.append({"path": path.relative_to(root).as_posix(), "sha256": sha(path), "bytes": path.stat().st_size})
