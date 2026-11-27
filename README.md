@@ -1,26 +1,36 @@
 <p align="center"><img src="assets/brand/omnisw-hero.png" width="100%" alt="OmniSolidWorks — Model. Assemble. Verify."></p>
 
-<p align="center"><a href="https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0"><strong>下载 V1.0.0</strong></a> · <a href="#安装与使用">快速安装</a> · <a href="README.en.md">English</a> · <a href="SKILL.md">Agent Skill</a> · <a href="FINAL_ASSESSMENT.md">验收记录</a></p>
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-B87948?style=flat-square" alt="MIT"></a>
+  <a href="SKILL.md"><img src="https://img.shields.io/badge/Agent-Codex-B87948?style=flat-square" alt="Codex"></a>
+  <a href="ENVIRONMENT_COMPATIBILITY.md"><img src="https://img.shields.io/badge/Host-Windows%20x64-B87948?style=flat-square" alt="Windows x64"></a>
+  <a href="https://github.com/Haruhi764/OmniSolidWorks-Skill/stargazers"><img src="https://img.shields.io/github/stars/Haruhi764/OmniSolidWorks-Skill?style=flat-square" alt="Stars"></a>
+  <a href="https://github.com/Haruhi764/OmniSolidWorks-Skill/forks"><img src="https://img.shields.io/github/forks/Haruhi764/OmniSolidWorks-Skill?style=flat-square" alt="Forks"></a>
+</p>
 
-# OmniSolidWorks Skill
+<h1 align="center">OmniSolidWorks-Skill — AI 机械建模与 SolidWorks 自动化</h1>
 
-**让 AI 不只生成机械模型，更能交付可编辑、可复核的工程成果。**
+<p align="center"><strong>不止于建模，更让每一次装配与交付有据可查。</strong></p>
+
+<p align="center"><a href="README.en.md">English</a> · <a href="SKILL.md">Agent Skill</a> · <a href="FINAL_ASSESSMENT.md">验收记录</a> · <a href="ENVIRONMENT_COMPATIBILITY.md">兼容性</a> · <a href="RELEASE_NOTES.md">发布说明</a></p>
 
 面向 Codex 的 SolidWorks 原生机械建模与装配 Skill，通过本地 COM/API 构建参数化零件、多级装配、爆炸视图和工程图，并以实际几何、配合、BOM 与重开结果作为验收依据。
 
 > V1.0.0 · 以 RC3 为技术基线。实测宿主为 SolidWorks 2014 x64 SP0（COM 22.0.0）。原生路线线持久化为实验性能力。
 
-## 核心能力
+[下载正式版](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) · [快速安装](#安装与使用) · [工程案例](#工程案例--mechanical-portfolio) · [证据驱动](#证据驱动--evidence-driven)
 
-| 参数化建模 | 机械装配 | 工程交付 |
+## 核心能力 · Core Capabilities
+
+| 01 / MODEL · 建模 | 02 / ASSEMBLE · 装配 | 03 / VERIFY · 验证 |
 | --- | --- | --- |
-| 原生特征、尺寸修改与重建 | 多级子装配、配合、爆炸步骤 | 工程图、剖视、BOM、气泡与拆装表 |
+| 原生特征、尺寸修改与重建 | 多级子装配、配合、爆炸步骤 | 几何回读、静态干涉、工程图与重开 |
 
 **先看案例，再看验收。** 下方展示真实 SolidWorks 输出，而非概念渲染。
 
-## 工程案例 / Mechanical portfolio
+## 工程案例 · Mechanical Portfolio
 
-### 三工位平行夹爪
+### 01 / 三工位平行夹爪
 
 正式独立盲测从 8 种参数化零件生成 3 个子装配和 18 个零件实例。顶层 5 步原生爆炸。第一角投影 A2 工程图含剖视、关联尺寸、8 行 BOM 和气泡。折合状态的原生实体干涉为零。
 
@@ -29,7 +39,7 @@
 | [![三工位夹爪真实爆炸视图](case-review/GripperExploded.png)](case-review/GripperExploded.png) | [![三工位夹爪 A2 工程图](case-review/GripperDrawing.png)](case-review/GripperDrawing.png) |
 | [拆装步骤表](case-review/DisassemblySteps.csv) | [RC3 案例验收](V1_SCOPE.md) |
 
-### 六工位装配与历史案例
+### 02 / 六工位装配与历史案例
 
 <img src="assets/brand/omnisw-assembly.png" width="100%" alt="历史六工位装配的折合与爆炸预览">
 
@@ -37,7 +47,7 @@
 
 首页铜橙横幅中的六工位图与上述归档图为早期实机案例。三工位夹爪是后续正式盲测案例，实机工程文件和原始 COM 日志保留在本地验收环境。
 
-## 证据驱动 / Evidence-driven engineering
+## 证据驱动 · Evidence-Driven
 
 <img src="assets/brand/omnisw-evidence.png" width="100%" alt="原生建模、实测、验收、重开">
 
@@ -56,6 +66,12 @@
 | **NOT SUPPORTED** | 连续实体扫掠碰撞与自动运动仿真。连续运动仅做 AABB 粗筛。 |
 
 RC2 全量验收 90/100，RC3 的 24 项单测、113 项清单校验和独立安装是历史证据。部分夹爪配合保留平面内自由度；2014 的 `sldapiu.dll` 访问违规是已知宿主风险。 [最终验收](FINAL_ASSESSMENT.md) · [兼容性](ENVIRONMENT_COMPATIBILITY.md) · [已知限制](OPEN_ITEMS.md)
+
+#### V1.0.0 · 实际验证记录
+
+| **90/100** | **24** 项单测 | **SolidWorks 2014** |
+| :---: | :---: | :---: |
+| RC2 全量验收 | RC3 历史记录 | x64 SP0 原生实测 |
 
 ## OmniGB Core
 
@@ -81,6 +97,14 @@ Python 未加入 PATH 时，可将完整路径传给 `-Python`。多会话可用
 QQ **313181842**。建议附 CAD 版本、复现步骤和脱敏样例。项目有权授权的原创内容采用 [MIT](LICENSE)，第三方范围见[授权说明](THIRD_PARTY_LICENSES.md)。
 
 ---
-<p align="center"><img src="assets/brand/omnisw-logo.svg" width="76" alt="OmniSolidWorks"></p>
+<p align="center"><img src="assets/brand/omnisw-logo.svg" width="96" alt="OmniSolidWorks"></p>
 <p align="center"><strong>OMNI · Model / Assemble / Verify</strong></p>
-<p align="center">同系列项目：<a href="https://github.com/Haruhi764/OmniCAD-Skill">OmniCAD</a></p>
+<p align="center"><a href="https://github.com/Haruhi764/OmniSolidWorks-Skill/issues">问题反馈</a> · <a href="https://github.com/Haruhi764/OmniSolidWorks-Skill/releases">版本下载</a></p>
+
+## Omni 系列 · Two dimensions, one philosophy
+
+| <a href="https://github.com/Haruhi764/OmniCAD-Skill"><img src="https://raw.githubusercontent.com/Haruhi764/OmniCAD-Skill/main/assets/omnicad-precision-crystal.svg" width="88" alt="OmniCAD"></a> | <img src="assets/brand/omnisw-logo.svg" width="88" alt="OmniSolidWorks"> |
+| :---: | :---: |
+| **[OmniCAD](https://github.com/Haruhi764/OmniCAD-Skill)** | **OmniSolidWorks** |
+| 二维工程制图 · Draft / Verify / Deliver | 三维机械建模 · Model / Assemble / Verify |
+
