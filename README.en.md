@@ -26,7 +26,7 @@ A SolidWorks automation skill for Codex, using local COM/API to create parametri
 | --- | --- | --- |
 | Native features, dimension edits and rebuilds | Nested assemblies, mates and explode steps | Geometry readback, static interference, drawings and reopen checks |
 
-The portfolio below shows actual SolidWorks outputs, not concept renders.
+The mechanical portfolio shows actual SolidWorks outputs; the innovation section separately presents community work.
 
 ## Mechanical Portfolio
 
@@ -46,6 +46,18 @@ The independent acceptance case generated eight parametric part types, three dis
 [Folded](case-review/MultiStationCollapsed.png) · [Exploded](case-review/MultiStationExploded.png) · [Guide fixture A3 drawing](case-review/GuideFixtureDrawing.png) · [Guide fixture BOM](case-review/BOM.csv) · [Bearing block A2 section](case-review/BearingBlockA2.png)
 
 The six-station images show earlier native CAD evidence. The three-station gripper is the later independent acceptance case. Native document sets and raw COM logs remain in local validation storage.
+
+## Innovative Mechanism
+
+### 01 / Pipe-cleaning robot
+
+<p align="center"><a href="OmniSolidWorks-robot-showcase%281%29.png"><img src="OmniSolidWorks-robot-showcase%281%29.png" width="100%" alt="Pipe-cleaning robot innovative mechanism showcase"></a></p>
+
+| Three-way centering | Impeller-style rotary mechanism | Elastic overload-buffer linkage |
+| :---: | :---: | :---: |
+| Centering and support | Rotary mechanism design | Compliant connection and buffering |
+
+<sub>Community collaboration, displayed with the original designer's permission. This is a visual presentation, not an independently generated or validated OmniSolidWorks V1.0 result. Original design files are not distributed under the project license; rights remain with the original designer.</sub>
 
 ## Evidence-Driven
 
