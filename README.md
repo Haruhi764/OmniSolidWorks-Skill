@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/brand/omnisw-hero.png" width="100%" alt="OmniSolidWorks — Model. Assemble. Verify."></p>
+<p align="center"><img src="assets/brand/omnisw-precision-hero.svg" width="100%" alt="OmniSolidWorks — Model. Assemble. Verify."></p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-B87948?style=flat-square" alt="MIT"></a>
@@ -45,7 +45,7 @@
 
 [六工位折合](case-review/MultiStationCollapsed.png) · [六工位爆炸](case-review/MultiStationExploded.png) · [导向夹具 A3 图纸](case-review/GuideFixtureDrawing.png) · [导向夹具 BOM](case-review/BOM.csv) · [轴承座剖视](case-review/BearingBlockA2.png)
 
-首页铜橙横幅中的六工位图与上述归档图为早期实机案例。三工位夹爪是后续正式盲测案例，实机工程文件和原始 COM 日志保留在本地验收环境。
+六工位折合与爆炸图为早期实机案例。三工位夹爪是后续正式盲测案例，实机工程文件和原始 COM 日志保留在本地验收环境。
 
 ## 证据驱动 · Evidence-Driven
 
