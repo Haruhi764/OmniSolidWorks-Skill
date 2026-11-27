@@ -1,6 +1,6 @@
 <p align="center"><img src="assets/brand/omnisw-hero.png" width="100%" alt="OmniSolidWorks — Model. Assemble. Verify."></p>
 
-<p align="center"><a href="README.en.md">English</a> · <a href="SKILL.md">Agent Skill</a> · <a href="ACCEPTANCE_REPORT.md">验收记录</a> · <a href="ENVIRONMENT_COMPATIBILITY.md">兼容性</a> · <a href="GB_RULE_COVERAGE.md">国标覆盖</a></p>
+<p align="center"><a href="https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0"><strong>下载 V1.0.0</strong></a> · <a href="#安装与使用">快速安装</a> · <a href="README.en.md">English</a> · <a href="SKILL.md">Agent Skill</a> · <a href="FINAL_ASSESSMENT.md">验收记录</a></p>
 
 # OmniSolidWorks Skill
 
@@ -9,6 +9,14 @@
 面向 Codex 的 SolidWorks 原生机械建模与装配 Skill，通过本地 COM/API 构建参数化零件、多级装配、爆炸视图和工程图，并以实际几何、配合、BOM 与重开结果作为验收依据。
 
 > V1.0.0 · 以 RC3 为技术基线。实测宿主为 SolidWorks 2014 x64 SP0（COM 22.0.0）。原生路线线持久化为实验性能力。
+
+## 核心能力
+
+| 参数化建模 | 机械装配 | 工程交付 |
+| --- | --- | --- |
+| 原生特征、尺寸修改与重建 | 多级子装配、配合、爆炸步骤 | 工程图、剖视、BOM、气泡与拆装表 |
+
+**先看案例，再看验收。** 下方展示真实 SolidWorks 输出，而非概念渲染。
 
 ## 工程案例 / Mechanical portfolio
 
@@ -54,6 +62,8 @@ RC2 全量验收 90/100，RC3 的 24 项单测、113 项清单校验和独立安
 对图纸尺寸链、重复跨度、纸面边界、BOM 和气泡一致性进行检查，并提供公开标准题录索引。公差、粗糙度及其他制造语义覆盖见[国标规则范围](GB_RULE_COVERAGE.md)。
 
 ## 安装与使用
+
+从 [V1.0.0 Release](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) 下载正式 ZIP 并解压。
 
 需要 Windows x64、Python 3.12+、Windows PowerShell 5.1 和已许可的 SolidWorks。打开空白 SolidWorks 会话，在解压目录运行。安装目标须为本地新目录。
 
