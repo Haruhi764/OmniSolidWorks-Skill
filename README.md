@@ -26,7 +26,7 @@
 | --- | --- | --- |
 | 原生特征、尺寸修改与重建 | 多级子装配、配合、爆炸步骤 | 几何回读、静态干涉、工程图与重开 |
 
-**先看案例，再看验收。** 下方展示真实 SolidWorks 输出，而非概念渲染。
+**先看案例，再看验收。** 工程案例展示真实 SolidWorks 输出；创新设计展区另列合作作品。
 
 ## 工程案例 · Mechanical Portfolio
 
@@ -46,6 +46,18 @@
 [六工位折合](case-review/MultiStationCollapsed.png) · [六工位爆炸](case-review/MultiStationExploded.png) · [导向夹具 A3 图纸](case-review/GuideFixtureDrawing.png) · [导向夹具 BOM](case-review/BOM.csv) · [轴承座剖视](case-review/BearingBlockA2.png)
 
 六工位折合与爆炸图为早期实机案例。三工位夹爪是后续正式盲测案例，实机工程文件和原始 COM 日志保留在本地验收环境。
+
+## 创新机械设计 · Innovative Mechanism
+
+### 01 / 管道清扫机器人
+
+<p align="center"><a href="OmniSolidWorks-robot-showcase%281%29.png"><img src="OmniSolidWorks-robot-showcase%281%29.png" width="100%" alt="管道清扫机器人创新机构设计展示"></a></p>
+
+| 三向定心机构 | 叶轮式旋转机构 | 弹性过载缓冲连杆 |
+| :---: | :---: | :---: |
+| 定心与支撑 | 旋转结构设计 | 柔性连接与缓冲 |
+
+<sub>社区合作作品，经原作者授权展示。展示图为视觉整理，不属于 OmniSolidWorks V1.0 独立生成或验收成果；原始设计文件未随项目开源，作品权利归原作者所有。</sub>
 
 ## 证据驱动 · Evidence-Driven
 
