@@ -17,6 +17,8 @@ public sealed partial class V03Native
     private const int Silent = 1;
     private const int ReadOnly = 2;
     private const int PromptForDimension = 10;
+    private const int Enable3DInterconnect = 691;
+    private const int FirstInterconnectRevision = 25;
     private const double DimensionTolerance = 0.003;
     private readonly ISldWorks app;
     private readonly IDictionary evidence;
@@ -27,6 +29,7 @@ public sealed partial class V03Native
     private readonly string template;
     private IModelDoc2 model;
     private int rebuilds;
+    private Action restoreStepPreferences;
 
     private V03Native(ISldWorks app, string template, string output, IDictionary evidence)
     {
@@ -106,19 +109,25 @@ public sealed partial class V03Native
         finally
         {
             try { CloseOwnedDocuments(); }
-            finally
-            {
-                if (app.GetUserPreferenceToggle(PromptForDimension) != previous)
-                    app.SetUserPreferenceToggle(PromptForDimension, previous);
-                evidence["preferencesRestored"] = app.GetUserPreferenceToggle(PromptForDimension) == previous;
-                evidence["documentCountAfter"] = app.GetDocumentCount();
-                evidence["rebuildCount"] = rebuilds;
-                evidence["trackedComInvocations"] = calls.Count;
-            }
+            finally { RestorePreferences(previous); }
         }
         if (app.GetDocumentCount() != 0 || !(bool)evidence["preferencesRestored"])
             throw new InvalidOperationException("The original SolidWorks job session state was not restored.");
         evidence["stage"] = "complete";
+    }
+
+    private void RestorePreferences(bool previous)
+    {
+        try { if (restoreStepPreferences != null) restoreStepPreferences(); }
+        finally
+        {
+            if (app.GetUserPreferenceToggle(PromptForDimension) != previous)
+                app.SetUserPreferenceToggle(PromptForDimension, previous);
+            evidence["preferencesRestored"] = app.GetUserPreferenceToggle(PromptForDimension) == previous;
+            evidence["documentCountAfter"] = app.GetDocumentCount();
+            evidence["rebuildCount"] = rebuilds;
+            evidence["trackedComInvocations"] = calls.Count;
+        }
     }
 
     private void Dispatch(IDictionary job)
@@ -254,13 +263,21 @@ public sealed partial class V03Native
         else
         {
             var points = Items(profile["points"]).Select(Vector).ToArray();
-            for (int index = 0; index < points.Length; index++)
+            bool previousAddToDb = manager.AddToDB;
+            try
             {
-                double[] a = ToSketch(sketch, points[index], elevation);
-                double[] b = ToSketch(sketch, points[(index + 1) % points.Length], elevation);
-                if (Track("CreateLine", () => manager.CreateLine(a[0], a[1], 0, b[0], b[1], 0)) == null)
-                    throw new InvalidOperationException("SolidWorks could not create a profile segment.");
+                // Programmatic engineering coordinates must not be moved by
+                // interactive sketch inference or near-endpoint snapping.
+                manager.AddToDB = true;
+                for (int index = 0; index < points.Length; index++)
+                {
+                    double[] a = ToSketch(sketch, points[index], elevation);
+                    double[] b = ToSketch(sketch, points[(index + 1) % points.Length], elevation);
+                    if (Track("CreateLine", () => manager.CreateLine(a[0], a[1], 0, b[0], b[1], 0)) == null)
+                        throw new InvalidOperationException("SolidWorks could not create a profile segment.");
+                }
             }
+            finally { manager.AddToDB = previousAddToDb; }
             if (axial)
             {
                 double[] a = ToSketch(sketch, new[] { -25.0, 0.0 }, elevation);
@@ -490,9 +507,13 @@ public sealed partial class V03Native
     {
         double x = M(point[0]), y = M(point[1]);
         var candidates = Items(SolidBody().GetFaces()).Cast<IFace2>().Where(face => {
-            if (!((ISurface)face.GetSurface()).IsPlane()) return false;
-            double[] box = Vector(face.GetBox());
-            if (Math.Abs(box[2] - z) >= 1e-8 || Math.Abs(box[5] - z) >= 1e-8) return false;
+            var surface = (ISurface)face.GetSurface();
+            if (!surface.IsPlane()) return false;
+            // GetBox is approximate and can enclose a planar face with a finite
+            // Z thickness. PlaneParams gives its exact normal and root point.
+            double[] plane = Vector(surface.PlaneParams);
+            if (Math.Abs(Math.Abs(plane[2]) - 1) >= 1e-8 ||
+                Math.Abs(plane[5] - z) >= 1e-8) return false;
             double[] nearest = Vector(face.GetClosestPointOn(x, y, z));
             return Math.Abs(nearest[0] - x) < 1e-8 && Math.Abs(nearest[1] - y) < 1e-8 && Math.Abs(nearest[2] - z) < 1e-8;
         }).ToArray();
@@ -619,28 +640,37 @@ public sealed partial class V03Native
         const int defaultPart = 8, alwaysDefault = 111;
         string previous = app.GetUserPreferenceStringValue(defaultPart);
         bool previousToggle = app.GetUserPreferenceToggle(alwaysDefault);
-        int error = 0;
-        IModelDoc2 doc = null;
-        try
+        bool supportsInterconnect = Int32.Parse(app.RevisionNumber().Split('.')[0]) >= FirstInterconnectRevision;
+        bool previousInterconnect = supportsInterconnect && app.GetUserPreferenceToggle(Enable3DInterconnect);
+        evidence["stepInterconnectBefore"] = previousInterconnect;
+        // Match the analytic STEP translation used by the 2014 baseline. Modern
+        // 3D Interconnect can expose different cylinder/edge topology. Restore
+        // global import options only after all imported documents are closed.
+        restoreStepPreferences = delegate
         {
-            if (!File.Exists(previous)) app.SetUserPreferenceStringValue(defaultPart, template);
-            if (!previousToggle) app.SetUserPreferenceToggle(alwaysDefault, true);
-            if (!File.Exists(app.GetUserPreferenceStringValue(defaultPart)) || !app.GetUserPreferenceToggle(alwaysDefault))
-                throw new InvalidOperationException("Cannot establish a valid STEP import template.");
-            calls.Add("LoadFile4");
-            doc = (IModelDoc2)app.LoadFile4(path, "r", app.GetImportFileData(path), ref error);
-            if (doc != null) Own(doc);
-            evidence["stepOpen"] = new Hashtable { {"ok", doc != null}, {"errors", error} };
-            if (doc == null || error != 0) throw new IOException("STEP import failed: " + error);
-        }
-        finally
-        {
-            if (app.GetUserPreferenceStringValue(defaultPart) != previous) app.SetUserPreferenceStringValue(defaultPart, previous);
-            if (app.GetUserPreferenceToggle(alwaysDefault) != previousToggle) app.SetUserPreferenceToggle(alwaysDefault, previousToggle);
+            if (app.GetUserPreferenceStringValue(defaultPart) != previous)
+                app.SetUserPreferenceStringValue(defaultPart, previous);
+            if (app.GetUserPreferenceToggle(alwaysDefault) != previousToggle)
+                app.SetUserPreferenceToggle(alwaysDefault, previousToggle);
+            if (supportsInterconnect && app.GetUserPreferenceToggle(Enable3DInterconnect) != previousInterconnect)
+                app.SetUserPreferenceToggle(Enable3DInterconnect, previousInterconnect);
             evidence["stepPreferencesRestored"] = app.GetUserPreferenceStringValue(defaultPart) == previous &&
-                app.GetUserPreferenceToggle(alwaysDefault) == previousToggle;
-        }
-        if (!(bool)evidence["stepPreferencesRestored"]) throw new InvalidOperationException("STEP import preferences were not restored.");
+                app.GetUserPreferenceToggle(alwaysDefault) == previousToggle &&
+                (!supportsInterconnect || app.GetUserPreferenceToggle(Enable3DInterconnect) == previousInterconnect);
+            if (!(bool)evidence["stepPreferencesRestored"])
+                throw new InvalidOperationException("STEP import preferences were not restored after document cleanup.");
+        };
+        if (previousInterconnect) app.SetUserPreferenceToggle(Enable3DInterconnect, false);
+        if (!File.Exists(previous)) app.SetUserPreferenceStringValue(defaultPart, template);
+        if (!previousToggle) app.SetUserPreferenceToggle(alwaysDefault, true);
+        if (!File.Exists(app.GetUserPreferenceStringValue(defaultPart)) || !app.GetUserPreferenceToggle(alwaysDefault))
+            throw new InvalidOperationException("Cannot establish a valid STEP import template.");
+        int error = 0;
+        calls.Add("LoadFile4");
+        var doc = (IModelDoc2)app.LoadFile4(path, "r", app.GetImportFileData(path), ref error);
+        if (doc != null) Own(doc);
+        evidence["stepOpen"] = new Hashtable { {"ok", doc != null}, {"errors", error} };
+        if (doc == null || error != 0) throw new IOException("STEP import failed: " + error);
         return doc;
     }
 

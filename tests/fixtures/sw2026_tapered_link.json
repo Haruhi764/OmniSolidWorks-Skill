@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "job_id": "Sw2026TaperedLink",
+  "document_type": "part",
+  "units": "mm",
+  "features": [
+    {
+      "id": "RootHousing",
+      "operation": "boss_extrude",
+      "plane": "base",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 110
+      },
+      "depth": 60
+    },
+    {
+      "id": "TaperedLink",
+      "operation": "boss_extrude",
+      "plane": "base",
+      "profile": {
+        "kind": "polygon",
+        "points": [
+          [
+            2.578125,
+            -54.93954196645959
+          ],
+          [
+            321.875,
+            -39.95603052106152
+          ],
+          [
+            321.875,
+            39.95603052106152
+          ],
+          [
+            2.578125,
+            54.93954196645959
+          ]
+        ]
+      },
+      "depth": 60
+    },
+    {
+      "id": "DistalHousing",
+      "operation": "boss_extrude",
+      "plane": "base",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          320,
+          0
+        ],
+        "diameter": 80
+      },
+      "depth": 60
+    },
+    {
+      "id": "ShoulderBearing",
+      "operation": "through_cut",
+      "plane": "RootHousing",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 60
+      }
+    },
+    {
+      "id": "ElbowShaft",
+      "operation": "boss_extrude",
+      "plane": "DistalHousing",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          320,
+          0
+        ],
+        "diameter": 50
+      },
+      "depth": 60
+    }
+  ],
+  "parameters": {},
+  "dependencies": [],
+  "outputs": {
+    "name": "Sw2026TaperedLink",
+    "formats": [
+      "sldprt",
+      "step"
+    ]
+  },
+  "validation": {
+    "volume_mm3": 2210063.9753196533,
+    "bounds_mm": [
+      [
+        -55,
+        -55,
+        0
+      ],
+      [
+        360,
+        55,
+        120
+      ]
+    ],
+    "cylinders": []
+  }
+}
