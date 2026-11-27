@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "job_id": "InstallSmoke",
+  "document_type": "part",
+  "units": "mm",
+  "features": [
+    {
+      "id": "Cylinder",
+      "operation": "boss_extrude",
+      "plane": "base",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 16
+      },
+      "depth": {
+        "parameter": "depth"
+      }
+    }
+  ],
+  "parameters": {
+    "depth": 7
+  },
+  "dependencies": [],
+  "outputs": {
+    "name": "InstallSmoke",
+    "formats": [
+      "sldprt",
+      "step"
+    ]
+  },
+  "validation": {
+    "bounds_mm": [
+      [
+        -8,
+        -8,
+        0
+      ],
+      [
+        8,
+        8,
+        7
+      ]
+    ],
+    "volume_mm3": 1407.4335088082273,
+    "cylinders": [
+      {
+        "diameter": 16,
+        "center": [
+          0,
+          0
+        ],
+        "z": [
+          0,
+          7
+        ]
+      }
+    ]
+  }
+}

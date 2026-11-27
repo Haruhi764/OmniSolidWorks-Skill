@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "unit": "mm",
+  "shaft": {
+    "segments": [
+      {"diameter": 20, "length": 30},
+      {"diameter": 30, "length": 50},
+      {"diameter": 24, "length": 40}
+    ]
+  },
+  "flange": {
+    "outer_diameter": 120,
+    "thickness": 12,
+    "bore_diameter": 30,
+    "bolt_diameter": 10,
+    "bolt_count": 4,
+    "pitch_circle_diameter": 80
+  }
+}

@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:solidworks-mechanical:v03:cad-job:1",
+  "title": "SolidWorks Mechanical CAD Job",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "job_id",
+    "document_type",
+    "units",
+    "features",
+    "parameters",
+    "dependencies",
+    "outputs",
+    "validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "job_id": {
+      "$ref": "#/$defs/id"
+    },
+    "document_type": {
+      "const": "part"
+    },
+    "units": {
+      "const": "mm"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/part_feature"
+      },
+      "minItems": 1,
+      "maxItems": 32
+    },
+    "parameters": {
+      "type": "object",
+      "maxProperties": 64,
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "outputs": {
+      "type": "object",
+      "required": [
+        "name",
+        "formats"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/id"
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "sldprt",
+              "step"
+            ]
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "validation": {
+      "$ref": "#/$defs/part_validation"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+    },
+    "dimension": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "required": [
+            "parameter"
+          ],
+          "properties": {
+            "parameter": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "p2": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dimension"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "xyz": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "profile": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "center",
+            "diameter"
+          ],
+          "properties": {
+            "kind": {
+              "const": "circle"
+            },
+            "center": {
+              "$ref": "#/$defs/p2"
+            },
+            "diameter": {
+              "$ref": "#/$defs/dimension"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "lower",
+            "upper"
+          ],
+          "properties": {
+            "kind": {
+              "const": "rectangle"
+            },
+            "lower": {
+              "$ref": "#/$defs/p2"
+            },
+            "upper": {
+              "$ref": "#/$defs/p2"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "points"
+          ],
+          "properties": {
+            "kind": {
+              "const": "polygon"
+            },
+            "points": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/p2"
+              },
+              "minItems": 3,
+              "maxItems": 32
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "part_feature": {
+      "type": "object",
+      "required": [
+        "id",
+        "operation",
+        "plane",
+        "profile"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "operation": {
+          "enum": [
+            "boss_extrude",
+            "through_cut",
+            "boss_revolve"
+          ]
+        },
+        "plane": {
+          "$ref": "#/$defs/id"
+        },
+        "profile": {
+          "$ref": "#/$defs/profile"
+        },
+        "axis": {
+          "const": "x"
+        },
+        "depth": {
+          "$ref": "#/$defs/dimension"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cylinder": {
+      "type": "object",
+      "required": [
+        "center",
+        "diameter",
+        "z"
+      ],
+      "properties": {
+        "center": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "diameter": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "z": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "additionalProperties": false
+    },
+    "geometry": {
+      "type": "object",
+      "required": [
+        "volume_mm3",
+        "bounds_mm",
+        "cylinders"
+      ],
+      "properties": {
+        "volume_mm3": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "bounds_mm": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/xyz"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "cylinders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cylinder"
+          },
+          "minItems": 0,
+          "maxItems": 128
+        },
+        "centroid_mm": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      },
+      "additionalProperties": false
+    },
+    "part_validation": {
+      "type": "object",
+      "required": [
+        "volume_mm3",
+        "bounds_mm",
+        "cylinders"
+      ],
+      "properties": {
+        "volume_mm3": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "bounds_mm": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/xyz"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "cylinders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cylinder"
+          },
+          "minItems": 0,
+          "maxItems": 128
+        },
+        "edit": {
+          "type": "object",
+          "required": [
+            "feature_id",
+            "depth_mm",
+            "geometry"
+          ],
+          "properties": {
+            "feature_id": {
+              "$ref": "#/$defs/id"
+            },
+            "depth_mm": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "geometry": {
+              "$ref": "#/$defs/geometry"
+            }
+          },
+          "additionalProperties": false
+        },
+        "centroid_mm": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

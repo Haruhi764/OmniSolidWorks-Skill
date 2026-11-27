@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "job_id": "BearingBlock",
+  "document_type": "part",
+  "units": "mm",
+  "features": [
+    {
+      "id": "Blank",
+      "operation": "boss_extrude",
+      "plane": "base",
+      "depth": {
+        "parameter": "thickness"
+      },
+      "profile": {
+        "kind": "rectangle",
+        "lower": [
+          -40,
+          -25
+        ],
+        "upper": [
+          40,
+          25
+        ]
+      }
+    },
+    {
+      "id": "BearingBore",
+      "operation": "through_cut",
+      "plane": "Blank",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 30
+      }
+    },
+    {
+      "id": "Bolt_L",
+      "operation": "through_cut",
+      "plane": "Blank",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          -28,
+          0
+        ],
+        "diameter": 8
+      }
+    },
+    {
+      "id": "Bolt_R",
+      "operation": "through_cut",
+      "plane": "Blank",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          28,
+          0
+        ],
+        "diameter": 8
+      }
+    }
+  ],
+  "parameters": {
+    "thickness": 20
+  },
+  "dependencies": [],
+  "outputs": {
+    "name": "BearingBlock",
+    "formats": [
+      "sldprt",
+      "step"
+    ]
+  },
+  "validation": {
+    "volume_mm3": 63852.21376054847,
+    "bounds_mm": [
+      [
+        -40,
+        -25,
+        0
+      ],
+      [
+        40,
+        25,
+        20
+      ]
+    ],
+    "cylinders": [
+      {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 30,
+        "z": [
+          0,
+          20
+        ]
+      },
+      {
+        "center": [
+          -28,
+          0
+        ],
+        "diameter": 8,
+        "z": [
+          0,
+          20
+        ]
+      },
+      {
+        "center": [
+          28,
+          0
+        ],
+        "diameter": 8,
+        "z": [
+          0,
+          20
+        ]
+      }
+    ],
+    "edit": {
+      "feature_id": "Blank",
+      "depth_mm": 21,
+      "geometry": {
+        "volume_mm3": 67044.82444857589,
+        "bounds_mm": [
+          [
+            -40,
+            -25,
+            0
+          ],
+          [
+            40,
+            25,
+            21
+          ]
+        ],
+        "cylinders": [
+          {
+            "center": [
+              0,
+              0
+            ],
+            "diameter": 30,
+            "z": [
+              0,
+              21
+            ]
+          },
+          {
+            "center": [
+              -28,
+              0
+            ],
+            "diameter": 8,
+            "z": [
+              0,
+              21
+            ]
+          },
+          {
+            "center": [
+              28,
+              0
+            ],
+            "diameter": 8,
+            "z": [
+              0,
+              21
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

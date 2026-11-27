@@ -1,0 +1,55 @@
+{
+  "paper": "A3",
+  "view_scale": 0.5,
+  "margin_mm": 5,
+  "unique_expected_dimensions": true,
+  "chains": {
+    "baseWidth": {
+      "anchors": {
+        "left": -85,
+        "right": 85
+      },
+      "dimensions": [
+        {
+          "start": "left",
+          "end": "right",
+          "mm": 170,
+          "text": "170"
+        }
+      ]
+    },
+    "baseHeight": {
+      "anchors": {
+        "bottom": -57.5,
+        "top": 57.5
+      },
+      "dimensions": [
+        {
+          "start": "bottom",
+          "end": "top",
+          "mm": 115,
+          "text": "115"
+        }
+      ]
+    }
+  },
+  "views": {
+    "Front": [
+      170,
+      115
+    ],
+    "Top": [],
+    "Left": [],
+    "Isometric": []
+  },
+  "bom": {
+    "FixtureBase": 1,
+    "GuideRail": 2,
+    "LocatingPin": 4,
+    "RetainingCollar": 4,
+    "SupportPad": 2,
+    "SideStop": 2,
+    "EndLocator": 2,
+    "RearFence": 1
+  }
+}

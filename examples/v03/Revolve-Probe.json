@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "job_id": "RevolveProbe",
+  "document_type": "part",
+  "units": "mm",
+  "features": [
+    {
+      "id": "Revolution",
+      "operation": "boss_revolve",
+      "plane": "base",
+      "axis": "x",
+      "profile": {
+        "kind": "polygon",
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            25,
+            0
+          ],
+          [
+            25,
+            8
+          ],
+          [
+            0,
+            8
+          ]
+        ]
+      }
+    }
+  ],
+  "parameters": {},
+  "dependencies": [],
+  "outputs": {
+    "name": "RevolveProbe",
+    "formats": [
+      "sldprt",
+      "step"
+    ]
+  },
+  "validation": {
+    "volume_mm3": 5026.548245743669,
+    "bounds_mm": [
+      [
+        0,
+        -8,
+        -8
+      ],
+      [
+        25,
+        8,
+        8
+      ]
+    ],
+    "cylinders": []
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "job_id": "BracketBaseFirst",
+  "document_type": "part",
+  "units": "mm",
+  "features": [
+    {
+      "id": "Base",
+      "operation": "boss_extrude",
+      "plane": "base",
+      "depth": {
+        "parameter": "base_thickness"
+      },
+      "profile": {
+        "kind": "rectangle",
+        "lower": [
+          -40,
+          -25
+        ],
+        "upper": [
+          40,
+          25
+        ]
+      }
+    },
+    {
+      "id": "Bolt_L",
+      "operation": "through_cut",
+      "plane": "Base",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          -25,
+          0
+        ],
+        "diameter": 8
+      }
+    },
+    {
+      "id": "Bolt_R",
+      "operation": "through_cut",
+      "plane": "Base",
+      "profile": {
+        "kind": "circle",
+        "center": [
+          25,
+          0
+        ],
+        "diameter": 8
+      }
+    },
+    {
+      "id": "Upright",
+      "operation": "boss_extrude",
+      "plane": "Base",
+      "depth": {
+        "parameter": "upright_height"
+      },
+      "profile": {
+        "kind": "rectangle",
+        "lower": [-40, 15],
+        "upper": [40, 25]
+      }
+    }
+  ],
+  "parameters": {
+    "base_thickness": 8,
+    "upright_height": 32
+  },
+  "dependencies": [],
+  "outputs": {
+    "name": "Bracket",
+    "formats": [
+      "sldprt",
+      "step"
+    ]
+  },
+  "validation": {
+    "volume_mm3": 56795.752280681016,
+    "bounds_mm": [
+      [
+        -40,
+        -25,
+        0
+      ],
+      [
+        40,
+        25,
+        40
+      ]
+    ],
+    "cylinders": [
+      {
+        "center": [
+          -25,
+          0
+        ],
+        "diameter": 8,
+        "z": [
+          0,
+          8
+        ]
+      },
+      {
+        "center": [
+          25,
+          0
+        ],
+        "diameter": 8,
+        "z": [
+          0,
+          8
+        ]
+      }
+    ],
+    "edit": {
+      "feature_id": "Upright",
+      "depth_mm": 33,
+      "geometry": {
+        "volume_mm3": 57595.752280681016,
+        "bounds_mm": [
+          [
+            -40,
+            -25,
+            0
+          ],
+          [
+            40,
+            25,
+            41
+          ]
+        ],
+        "cylinders": [
+          {
+            "center": [
+              -25,
+              0
+            ],
+            "diameter": 8,
+            "z": [
+              0,
+              8
+            ]
+          },
+          {
+            "center": [
+              25,
+              0
+            ],
+            "diameter": 8,
+            "z": [
+              0,
+              8
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "release": "1.0.0-rc.2",
+  "host": "SolidWorks 2014 x64 SP0 / 22.0.0",
+  "technical_candidate": true,
+  "score": 90,
+  "scores": {
+    "parametric_parts": {
+      "earned": 15,
+      "maximum": 15,
+      "evidence": "Eight independent parametric files with native geometry and edit readback."
+    },
+    "assembly_and_constraints": {
+      "earned": 15,
+      "maximum": 15,
+      "evidence": "Three distinct mated modules, nested reference readback, locations and native solid-interference check."
+    },
+    "explosion_quality": {
+      "earned": 16,
+      "maximum": 20,
+      "evidence": "Native editable steps, reopened positions, collapsed restoration and disassembly table. Four points unearned for G06."
+    },
+    "drawing_and_bom": {
+      "earned": 19,
+      "maximum": 20,
+      "evidence": "Checked native first-angle sheet, section, model-derived dimensions, parts-only BOM and item balloons. One point remains unearned."
+    },
+    "automated_acceptance": {
+      "earned": 9,
+      "maximum": 10,
+      "evidence": "Initial and edited geometry, missing reference, static interference and BOM mismatches are rejected."
+    },
+    "stability_and_recovery": {
+      "earned": 8,
+      "maximum": 10,
+      "evidence": "Three prior cold starts and current bounded recovery. sldapiu.dll access violations recurred; successful recovery used a fresh host."
+    },
+    "deployment_and_portability": {
+      "earned": 8,
+      "maximum": 10,
+      "evidence": "Hash-verified clean-install smoke for the same install process; rerun against the packaged RC as final delivery gate."
+    }
+  },
+  "historical_rc1": 90,
+  "route_persistence": "FAIL / experimental",
+  "technical_scope_revision": "Owner directed G06 experimental if unresolved; weight retained",
+  "repository_publication": false,
+  "open_source_license_approved": false,
+  "positive_blind_case": "PASS",
+  "historical_regression": true,
+  "regression_checks": {
+    "shaft_flange_and_ab": true,
+    "reducer": true,
+    "bearing": true,
+    "fixture": true,
+    "hierarchy": true,
+    "gripper_drawing": true,
+    "native_demo": true,
+    "negative": true,
+    "unit_and_supervisor": true
+  }
+}
