@@ -12,13 +12,13 @@
 
 <p align="center"><strong>不止于建模，更让每一次装配与交付有据可查。</strong></p>
 
-<p align="center"><a href="README.en.md">English</a> · <a href="SKILL.md">Agent Skill</a> · <a href="FINAL_ASSESSMENT.md">验收记录</a> · <a href="ENVIRONMENT_COMPATIBILITY.md">兼容性</a> · <a href="RELEASE_NOTES.md">发布说明</a></p>
+<p align="center"><a href="README.en.md">English</a> · <a href="SKILL.md">Agent Skill</a> · <a href="ACCEPTANCE_REPORT.md">补丁验收</a> · <a href="ENVIRONMENT_COMPATIBILITY.md">兼容性</a> · <a href="RELEASE_NOTES.md">发布说明</a></p>
 
 面向 Codex 的 SolidWorks 原生机械建模与装配 Skill，通过本地 COM/API 构建参数化零件、多级装配、爆炸视图和工程图，并以实际几何、配合、BOM 与重开结果作为验收依据。
 
-> V1.0.0 · 以 RC3 为技术基线。实测宿主为 SolidWorks 2014 x64 SP0（COM 22.0.0）。原生路线线持久化为实验性能力。
+> **V1.0.1-RC1 已进入预发布。** SolidWorks 2014 x64 SP0（COM 22.0.0）已完成实机测试。SolidWorks 2024 尚未完成实机验证。SolidWorks 2026 兼容性补丁已完成并通过模拟测试，等待外部实机复测。原生路线线持久化仍为实验性能力。
 
-[下载正式版](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) · [快速安装](#安装与使用) · [工程案例](#工程案例--mechanical-portfolio) · [证据驱动](#证据驱动--evidence-driven)
+[下载 V1.0.0 稳定版](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) · [下载 V1.0.1-RC1 预发布](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.1-rc.1) · [快速安装](#安装与使用) · [工程案例](#工程案例--mechanical-portfolio) · [证据驱动](#证据驱动--evidence-driven)
 
 ## 自动建模演示
 
@@ -80,10 +80,11 @@
 | --- | --- |
 | **PASS** | SolidWorks 2014 x64 SP0 上的已验收零件、装配、原生爆炸步骤和工程图工作流。 |
 | **EXPERIMENTAL** | G06 原生路线线重开持久化未通过。拆装资料采用原生步骤、气泡和步骤表。 |
-| **NOT VERIFIED** | 其他主版本或跨机器兼容性。 |
+| **SIMULATION PASS** | SolidWorks 2026 的 STEP 圆柱拆分和未知原生容器，待外部实机复测。 |
+| **NOT VERIFIED** | SolidWorks 2024、其他主版本及跨机器实机兼容性。 |
 | **NOT SUPPORTED** | 连续实体扫掠碰撞与自动运动仿真。连续运动仅做 AABB 粗筛。 |
 
-RC2 全量验收 90/100，RC3 的 24 项单测、113 项清单校验和独立安装是历史证据。部分夹爪配合保留平面内自由度；2014 的 `sldapiu.dll` 访问违规是已知宿主风险。 [最终验收](FINAL_ASSESSMENT.md) · [兼容性](ENVIRONMENT_COMPATIBILITY.md) · [已知限制](OPEN_ITEMS.md)
+RC2 全量验收 90/100，RC3 的 24 项单测、113 项清单校验和独立安装是历史证据。部分夹爪配合保留平面内自由度；2014 的 `sldapiu.dll` 访问违规是已知宿主风险。 [V1.0.0 历史验收](FINAL_ASSESSMENT.md) · [兼容性](ENVIRONMENT_COMPATIBILITY.md) · [已知限制](OPEN_ITEMS.md)
 
 #### V1.0.0 · 实际验证记录
 
@@ -97,7 +98,7 @@ RC2 全量验收 90/100，RC3 的 24 项单测、113 项清单校验和独立安
 
 ## 安装与使用
 
-从 [V1.0.0 Release](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) 下载正式 ZIP 并解压。
+从 [V1.0.0 稳定版](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) 或 [V1.0.1-RC1 预发布](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.1-rc.1) 下载对应的安装 ZIP，核对同页的 SHA-256 后解压。参与 SW2026 外测时，使用新的安装目录并保留旧安装。 [SW2026 复测指南](docs/ISSUE_2_SW2026_RETEST.md)
 
 需要 Windows x64、Python 3.12+、Windows PowerShell 5.1 和已许可的 SolidWorks。打开空白 SolidWorks 会话，在解压目录运行。安装目标须为本地新目录。
 
@@ -106,7 +107,7 @@ python -B scripts/v03_jobs.py --preflight
 powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File .\scripts\Install-SolidWorksSkill.ps1 -Destination 'D:\OmniSolidWorks' -Smoke
 ```
 
-Python 未加入 PATH 时，可将完整路径传给 `-Python`。多会话可用 `SOLIDWORKS_TARGET_PID` 选择空白会话。卸载前备份需保留的 `outputs`，再删除独立安装目录。 [Skill](SKILL.md) · [操作指南](docs/V03_GUIDE.md) · [爆炸图指南](docs/EXPLODED_VIEW_GUIDE.md) · [安全审计](SECURITY_AUDIT.md) · [发布说明](RELEASE_NOTES.md)
+Python 未加入 PATH 时，可将完整路径传给 `-Python`。多会话可用 `SOLIDWORKS_TARGET_PID` 选择空白会话。卸载前备份需保留的 `outputs`，再删除独立安装目录。 [Skill](SKILL.md) · [操作指南](docs/V03_GUIDE.md) · [爆炸图指南](docs/EXPLODED_VIEW_GUIDE.md) · [补丁安全审计](FINAL_SECURITY_AUDIT.md) · [发布说明](RELEASE_NOTES.md)
 
 ## 官方技术交流群
 

@@ -1,4 +1,12 @@
-# OmniSolidWorks Skill V1.0.0
+# OmniSolidWorks Skill V1.0.1-RC1
+
+基于已发布的 V1.0.0。修复 Issue #2 报告的 STEP 圆柱面计数、原生文件签名假设和 Python 版本预检。SolidWorks 2014 x64 SP0 已完成实机测试。SolidWorks 2024 尚未完成实机验证。SolidWorks 2026 特殊兼容性已完成模拟测试。正式发布需外部 SW2026 实机复测及维护者确认。 [补丁验收](ACCEPTANCE_REPORT.md) · [复测说明](docs/ISSUE_2_SW2026_RETEST.md)
+
+## Upgrade
+
+Use Windows x64 Python 3.12+, Windows PowerShell 5.1, and a licensed SolidWorks installation. Extract the candidate to a new directory, then run the installer with a separate destination and `-Smoke`. Retain the old installation and any existing outputs for rollback. [English installation](README.en.md) · [中文安装](README.md)
+
+## 历史记录 · V1.0.0 发布说明
 
 OmniSolidWorks 通过本机 SolidWorks COM/API 生成可编辑参数化零件、多级配合装配、原生爆炸步骤及关联工程图。V1.0.0 以 RC3 为技术基线，整合品牌、文档、许可及分发文件。
 
@@ -8,7 +16,7 @@ OmniSolidWorks 通过本机 SolidWorks COM/API 生成可编辑参数化零件、
 - **已知限制**　实机范围为 SolidWorks 2014 x64 SP0（COM 22.0.0）。其他版本或跨机器没有完成同等实机验收。G06 原生爆炸路线线重开持久化未通过，仍为实验性功能。稳定拆装资料包含原生步骤、气泡和步骤表。部分配合保留平面内自由度。连续运动仅做 AABB 粗筛。SolidWorks 2014 的 `sldapiu.dll` 访问违规为已知宿主风险。
 - 项目有权授权的原创内容采用 MIT。第三方来源、标准和 SolidWorks 的权利按各自条款处理。官方技术交流群 QQ **313181842**。
 
-## English
+### V1.0.0 English
 
 OmniSolidWorks uses local SolidWorks COM/API to build editable parametric parts, nested mated assemblies, native explode steps, and linked drawings. V1.0.0 integrates the approved brand, documentation, licensing, and distribution files with the RC3 technical baseline.
 

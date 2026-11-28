@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "job_id": "Cylinder40x30",
+  "document_type": "part",
+  "units": "mm",
+  "features": [
+    {
+      "id": "Blank",
+      "operation": "boss_extrude",
+      "plane": "base",
+      "depth": {
+        "parameter": "thickness"
+      },
+      "profile": {
+        "kind": "circle",
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 40
+      }
+    }
+  ],
+  "parameters": {
+    "thickness": 30
+  },
+  "dependencies": [],
+  "outputs": {
+    "name": "Cylinder40x30",
+    "formats": [
+      "sldprt",
+      "step"
+    ]
+  },
+  "validation": {
+    "volume_mm3": 37699.11184307752,
+    "bounds_mm": [
+      [
+        -20,
+        -20,
+        0
+      ],
+      [
+        20,
+        20,
+        30
+      ]
+    ],
+    "centroid_mm": [
+      0,
+      0,
+      15.0
+    ],
+    "cylinders": [
+      {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 40,
+        "z": [
+          0,
+          30
+        ]
+      }
+    ],
+    "edit": {
+      "feature_id": "Blank",
+      "depth_mm": 31,
+      "geometry": {
+        "volume_mm3": 38955.748904513435,
+        "bounds_mm": [
+          [
+            -20,
+            -20,
+            0
+          ],
+          [
+            20,
+            20,
+            31
+          ]
+        ],
+        "centroid_mm": [
+          0,
+          0,
+          15.5
+        ],
+        "cylinders": [
+          {
+            "center": [
+              0,
+              0
+            ],
+            "diameter": 40,
+            "z": [
+              0,
+              31
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

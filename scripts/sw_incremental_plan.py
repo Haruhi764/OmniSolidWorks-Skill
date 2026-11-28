@@ -12,7 +12,7 @@ def input_row(source):
 
 def make_plan(run, phase, job, inputs, outputs, retain=(), checkpoint=None):
     engine_paths = [ROOT / "scripts" / name for name in (
-        "Invoke-V03Job.ps1", "sw_supervisor.py", "sw_supervisor_state.py", "sw_incremental_plan.py")]
+        "Invoke-V03Job.ps1", "v03_jobs.py", "sw_supervisor.py", "sw_supervisor_state.py", "sw_incremental_plan.py")]
     engine_paths += sorted((ROOT / "scripts").glob("V03Native*.cs"))
     plan = {"host_revision": read(run / "BASELINE.json")["revision"], "job": job, "inputs": inputs,
             "outputs": list(outputs), "retain": list(retain), "checkpoint": checkpoint,

@@ -6,6 +6,7 @@ import sys
 
 from omni_gb import audit
 from sw_release_case import dependency, execute
+from v03_jobs import preflight
 from sw_supervisor_state import OUTPUT, ROOT, atomic, read, require_workspace, safe
 
 sys.path.insert(0, str(ROOT / "examples"))
@@ -89,8 +90,13 @@ def main():
     run = safe(OUTPUT / ("run-omni-" + args.mode), OUTPUT)
     run.mkdir(parents=True, exist_ok=True)
     baseline = run / "BASELINE.json"
+    host = preflight()
+    if host.get("status") != "PASS":
+        raise ValueError(f"Smoke preflight failed: {host.get('error', host.get('stage'))}")
     if not baseline.exists():
-        atomic(baseline, {"started": datetime.now(timezone.utc).isoformat(), "revision": "22.0.0"})
+        atomic(baseline, {"started": datetime.now(timezone.utc).isoformat(), "revision": host["revision"]})
+    elif read(baseline)["revision"] != host["revision"]:
+        raise ValueError("Use a fresh installation to test a different SolidWorks revision")
     if args.mode == "install":
         build_demo(run)
     elif args.mode == "fixture":

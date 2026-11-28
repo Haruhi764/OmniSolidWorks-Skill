@@ -12,7 +12,7 @@ from sw_supervisor_state import (
     LABEL, OUTPUT, ROOT, atomic, classify, digest, exclusive, read, refresh,
     require_workspace, safe, sha, shorten, snapshot,
 )
-from v03_jobs import configuration, environment, get_template, host_command
+from v03_jobs import NATIVE_TYPES, configuration, environment, get_template, host_command, verify_native_output
 
 PHASES = {"smoke", "explode-capture", "explode", "drawing", "drawing-r1", "drawing-r2", "regression"}
 HARD_TIMEOUT = 600
@@ -216,6 +216,11 @@ def supervise(run, phase, plan, probe=environment, worker=native_worker, event_p
             if code == 0 and not timed_out and eligible(native, phase, plan["job"]["document_type"], host):
                 try:
                     accepted = snapshot(partial, ["native.json", *plan["outputs"], *plan.get("retain", [])])
+                    for name in plan["outputs"]:
+                        artifact = partial / name
+                        if artifact.suffix.lower() in NATIVE_TYPES:
+                            row = accepted[name]
+                            verify_native_output(artifact, native, row["bytes"], row["sha256"])
                 except (OSError, ValueError) as error:
                     refresh(path, state, "failed", "artifact_validation", failure=shorten(error))
                     return state

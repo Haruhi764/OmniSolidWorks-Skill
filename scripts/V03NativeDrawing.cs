@@ -365,7 +365,7 @@ public sealed partial class V03Native
                 throw new InvalidOperationException("The drawing omitted or changed required dimension " + target + " mm.");
         if (plan.CenterMarks && CountCenterMarks(main) == 0)
             throw new InvalidOperationException("The native hole center marks were lost.");
-        var result = new Hashtable { {"sheet", sheet.GetName()}, {"sheetFormat", sheet.GetTemplateName()}, {"firstAngle", true},
+        var result = new Hashtable { {"verified", true}, {"sheet", sheet.GetName()}, {"sheetFormat", sheet.GetTemplateName()}, {"firstAngle", true},
             {"sheetMm", new[] { Mm(plan.Width), Mm(plan.Height) }}, {"scale", plan.Scale}, {"views", rows}, {"dimensionsMm", dimensionValues} };
         int standard = model.Extension.GetUserPreferenceInteger(13, 0);
         if (standard != 7) throw new InvalidOperationException("The GB detailing standard did not persist.");

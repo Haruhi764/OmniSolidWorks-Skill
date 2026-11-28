@@ -7,7 +7,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from sw_supervisor import bounded_worker, inspect, supervise
-from sw_supervisor_state import OUTPUT, atomic, classify, exclusive, read
+from sw_supervisor_state import OUTPUT, atomic, classify, exclusive, read, sha
+from test_issue2_hotfix import cfb_header
 
 
 class SupervisorTests(unittest.TestCase):
@@ -23,10 +24,14 @@ class SupervisorTests(unittest.TestCase):
 
     def pass_worker(self, folder, _kind, host, _timeout, progress):
         progress(stage="reopen", heartbeat="mock")
-        (folder / "part.SLDPRT").write_bytes(b"mock")
+        path = folder / "part.SLDPRT"
+        path.write_bytes(cfb_header())
+        proof = {"name": path.name, "bytes": path.stat().st_size, "sha256": sha(path), "documentType": 1}
+        saved = {"ok": True, "errors": 0, "warnings": 0, "path": str(path)}
         atomic(folder / "native.json", dict(status="PASS", stage="complete", pid=host["pid"],
-               revision=host["revision"], documentCountAfter=0, preferencesRestored=True,
-               nativeSave={"ok": True}, nativeOpen={"ok": True}, reopenedGeometry={"verified": True}))
+               revision=host["revision"], documentCountBefore=0, documentCountAfter=0, preferencesRestored=True,
+               nativeSave=saved, nativeOpen={**saved, "documentType": 1, "fileBeforeReopen": proof},
+               nativeFile=proof, reopenedGeometry={"verified": True, "solids": 1, "bodyCheckCode": 0}))
         return 0, False
 
     def test_resume_and_cache_verify_bytes(self):

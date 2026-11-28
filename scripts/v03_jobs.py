@@ -1,4 +1,16 @@
 """Validation, local execution and compact summaries for V0.3 jobs."""
+import sys
+
+if sys.version_info < (3, 12):
+    version = ".".join(map(str, sys.version_info[:3]))
+    error = (f"Python {version} is running. OmniSolidWorks requires Python 3.12 or later. "
+             "Install Windows x64 Python 3.12+ and invoke it directly or pass its path to the installer with -Python.")
+    if __name__ == "__main__" and "--preflight" in sys.argv[1:]:
+        import json
+        print(json.dumps({"status": "BLOCKED", "stage": "python_version", "error": error}))
+        raise SystemExit(1)
+    raise SystemExit(error)
+
 import argparse
 import hashlib
 import json
@@ -19,6 +31,8 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "outputs" / "v0.3"
 MAX_JOB_BYTES = 4 * 1024 * 1024
 MAX_JOB_DEPTH = 32
+OLE_HEADER = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
+NATIVE_TYPES = {".sldprt": 1, ".sldasm": 2, ".slddrw": 3}
 
 
 def decode_document(payload):
@@ -236,26 +250,99 @@ def dependency_path(job, folder, index, row):
     return anchor / f'{row["id"]}{Path(row["path"]).suffix.upper()}'
 
 
-def artifact_rows(job, folder, root):
+def native_container(path, native, size):
+    with path.open("rb") as stream:
+        start = stream.read(512)
+    if start.startswith(OLE_HEADER):
+        major = int.from_bytes(start[26:28], "little")
+        sector_shift = int.from_bytes(start[30:32], "little")
+        if ((major, sector_shift) in {(3, 9), (4, 12)} and start[28:30] == b"\xfe\xff"
+                and start[32:34] == b"\x06\x00" and size >= 3 * (1 << sector_shift)
+                and size % (1 << sector_shift) == 0):
+            return "compound-file"
+        raise ValueError(f"Malformed compound file: {path.name}")
+    revision = str(native.get("revision", ""))
+    if size <= 0 or not re.fullmatch(r"[0-9]+(?:\.[0-9]+)+", revision) or int(revision.split(".")[0]) < 34:
+        raise ValueError(f"Unexpected native file signature on this SolidWorks revision: {path.name}")
+    return "native-reopen"
+
+
+def same_native_path(row, path):
+    candidate = row.get("path")
+    return isinstance(candidate, str) and bool(candidate) and Path(candidate).resolve() == path.resolve()
+
+
+def native_open_matches(row, path, kind, allowed_warnings):
+    warnings = row.get("warnings")
+    return (row.get("ok") is True and row.get("errors") == 0 and row.get("documentType") == kind
+            and type(warnings) is int and warnings & ~allowed_warnings == 0
+            and same_native_path(row, path))
+
+
+def verify_native_output(path, native, size, digest):
+    container = native_container(path, native, size)
+    kind = NATIVE_TYPES[path.suffix.lower()]
+    opened = native.get("nativeOpen", {})
+    saved = native.get("nativeSave", {})
+    file = {"name": path.name, "documentType": kind, "sha256": digest, "bytes": size}
+    if (native.get("status") != "PASS" or native.get("stage") != "complete"
+            or native.get("documentCountBefore") != 0 or native.get("documentCountAfter") != 0
+            or native.get("preferencesRestored") is not True
+            or saved.get("ok") is not True or saved.get("errors") != 0 or saved.get("warnings") != 0
+            or not same_native_path(saved, path)
+            or not native_open_matches(opened, path, kind, 32 if kind == 2 else 0)
+            or opened.get("fileBeforeReopen") != file or native.get("nativeFile") != file):
+        raise ValueError(f"Missing or mismatched SolidWorks reopen and byte-integrity evidence: {path.name}")
+    if kind == 1:
+        geometry = native.get("reopenedGeometry", {})
+        valid = (geometry.get("solids") == 1 and geometry.get("bodyCheckCode") == 0
+                 and (geometry.get("verified") is True or geometry.get("verifiedPhase") is True))
+    elif kind == 2:
+        assembly = native.get("reopenedAssembly", {})
+        valid = assembly.get("verified") is True and bool(assembly.get("components"))
+    else:
+        drawing = native.get("reopenedDrawing", {})
+        valid = drawing.get("verified") is True and bool(drawing.get("views"))
+    if not valid:
+        raise ValueError(f"Missing SolidWorks post-reopen document checks: {path.name}")
+    return container
+
+
+def artifact_rows(job, folder, root, native=None):
+    if native is None:
+        native = json.loads((folder / "native.json").read_text(encoding="utf-8"))
+    dependencies = {dependency_path(job, folder, index, row): row["sha256"]
+                    for index, row in enumerate(job["dependencies"])}
     paths = [folder / f'{job["outputs"]["name"]}.{kind.upper()}' for kind in job["outputs"]["formats"]]
-    paths += [dependency_path(job, folder, index, row) for index, row in enumerate(job["dependencies"])]
-    signatures = {".sldprt": b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1", ".sldasm": b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1",
-                  ".slddrw": b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1", ".step": b"ISO-10303-21;", ".pdf": b"%PDF-", ".dwg": b"AC10"}
+    signatures = {".step": b"ISO-10303-21;", ".pdf": b"%PDF-", ".dwg": b"AC10"}
     result = []
-    for path in paths:
-        with path.open("rb") as stream:
-            suffix = path.suffix.lower()
-            if suffix == ".dxf":
-                start = stream.read(512)
-                valid = start.startswith(b"AutoCAD Binary DXF") or start.lstrip(b"\xef\xbb\xbf \t\r\n").startswith((b"0\r\nSECTION", b"0\nSECTION", b"999"))
-                if valid and not start.startswith(b"AutoCAD Binary DXF"):
-                    stream.seek(max(0, path.stat().st_size - 100))
-                    valid = stream.read().rstrip().endswith(b"EOF")
-            else:
-                valid = stream.read(24).startswith(signatures[suffix])
-            if not valid:
-                raise ValueError(f"Unexpected file signature for {path.name}")
-        result.append({"path": path.relative_to(root).as_posix(), "sha256": sha(path), "bytes": path.stat().st_size})
+    for path in [*paths, *dependencies]:
+        suffix = path.suffix.lower()
+        size, digest = path.stat().st_size, sha(path)
+        if path in dependencies:
+            if digest != dependencies[path]:
+                raise ValueError(f"Staged dependency changed: {path.name}")
+            container = native_container(path, native, size)
+            if container == "native-reopen" and not any(
+                    isinstance(row, dict) and native_open_matches(row, path, NATIVE_TYPES[suffix], 32)
+                    for key, row in native.items() if key.startswith(("sourceOpen:", "subassemblyOpen:", "child:"))
+                    or key == "drawingSource"):
+                raise ValueError(f"Unknown native dependency has no matching SolidWorks open: {path.name}")
+        elif suffix in NATIVE_TYPES:
+            verify_native_output(path, native, size, digest)
+        else:
+            with path.open("rb") as stream:
+                if suffix == ".dxf":
+                    start = stream.read(512)
+                    valid = start.startswith(b"AutoCAD Binary DXF") or start.lstrip(b"\xef\xbb\xbf \t\r\n").startswith((b"0\r\nSECTION", b"0\nSECTION", b"999"))
+                    if valid and not start.startswith(b"AutoCAD Binary DXF"):
+                        stream.seek(max(0, size - 100))
+                        valid = stream.read().rstrip().endswith(b"EOF")
+                else:
+                    valid = stream.read(24).startswith(signatures[suffix])
+                if not valid:
+                    raise ValueError(f"Unexpected file signature for {path.name}")
+        result.append({"path": path.relative_to(root).as_posix(), "sha256": digest, "bytes": size})
     return result
 
 
@@ -281,9 +368,11 @@ def cached_result(job, directory, root, fingerprint):
             if record["status"] != "PASS":
                 return None
             try:
-                artifacts = artifact_rows(job, candidate.parent, root)
                 native = candidate.parent / "native.json"
-                if artifacts == record["artifacts"] and sha(native) == record["native_sha256"]:
+                if sha(native) != record["native_sha256"]:
+                    continue
+                artifacts = artifact_rows(job, candidate.parent, root)
+                if artifacts == record["artifacts"]:
                     record["cache_hit"] = True
                     return record
             except (OSError, ValueError):
@@ -318,7 +407,7 @@ def execute(job, directory, root, fingerprint, revision, install, template, chec
                        "native_sha256": sha(report), "com_calls": native.get("trackedComInvocations"),
                        "rebuilds": native.get("rebuildCount")})
         if process.returncode == 0 and native["status"] == "PASS":
-            result["artifacts"] = artifact_rows(job, folder, root)
+            result["artifacts"] = artifact_rows(job, folder, root, native)
             if native.get("reopenedGeometry"):
                 result["volume_mm3"] = native["reopenedGeometry"]["volumeMm3"]
             if native.get("reopenedAssembly"):

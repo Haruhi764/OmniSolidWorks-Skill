@@ -12,13 +12,13 @@
 
 <p align="center"><strong>Beyond modeling — evidence for every assembly and deliverable.</strong></p>
 
-<p align="center"><a href="README.md">中文</a> · <a href="SKILL.md">Agent Skill</a> · <a href="FINAL_ASSESSMENT.md">Validation</a> · <a href="ENVIRONMENT_COMPATIBILITY.md">Compatibility</a> · <a href="RELEASE_NOTES.md">Release notes</a></p>
+<p align="center"><a href="README.md">中文</a> · <a href="SKILL.md">Agent Skill</a> · <a href="ACCEPTANCE_REPORT.md">Patch validation</a> · <a href="ENVIRONMENT_COMPATIBILITY.md">Compatibility</a> · <a href="RELEASE_NOTES.md">Release notes</a></p>
 
 A SolidWorks automation skill for Codex, using local COM/API to create parametric parts, hierarchical assemblies, exploded views and drawings with geometry, mates, BOM and reopen checks.
 
-> V1.0.0 uses RC3 as its technical baseline. Verified host: SolidWorks 2014 x64 SP0 (COM 22.0.0). Native route-line persistence remains experimental.
+> **V1.0.1-RC1 is available as a pre-release.** Live tests passed on SolidWorks 2014 x64 SP0 (COM 22.0.0). SolidWorks 2024 is pending live validation. The SolidWorks 2026 compatibility patch passed simulation and awaits external live retesting. Native route-line persistence remains experimental.
 
-[Download V1.0.0](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) · [Quick start](#installation-and-use) · [Portfolio](#mechanical-portfolio) · [Evidence](#evidence-driven)
+[Download V1.0.0 stable](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) · [Download V1.0.1-RC1 pre-release](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.1-rc.1) · [Quick start](#installation-and-use) · [Portfolio](#mechanical-portfolio) · [Evidence](#evidence-driven)
 
 ## Automatic Modeling Demo
 
@@ -80,10 +80,11 @@ The six-station images show earlier native CAD evidence. The three-station gripp
 | --- | --- |
 | **PASS** | Accepted native part, assembly, explode-step and drawing workflows on SolidWorks 2014 x64 SP0. |
 | **EXPERIMENTAL** | G06 native route-line persistence failed reopen. Disassembly documentation uses native steps, balloons and a step table. |
-| **NOT VERIFIED** | Other major releases and cross-machine compatibility. |
+| **SIMULATION PASS** | Split STEP cylinder faces and unknown native containers for SolidWorks 2026. External live retesting is pending. |
+| **NOT VERIFIED** | Live compatibility with SolidWorks 2024, other major releases, and other machines. |
 | **NOT SUPPORTED** | Continuous swept-solid collision detection and automated motion simulation. Continuous-motion checking uses a swept AABB broad phase. |
 
-RC2 scored 90/100. RC3's 24 unit tests, 113-file manifest verification and independent installation are inherited evidence. Some gripper mates retain in-plane freedom. SolidWorks 2014 has a known `sldapiu.dll` access violation. [Acceptance](FINAL_ASSESSMENT.md) · [Compatibility](ENVIRONMENT_COMPATIBILITY.md) · [Known limits](OPEN_ITEMS.md)
+RC2 scored 90/100. RC3's 24 unit tests, 113-file manifest verification and independent installation are inherited evidence. Some gripper mates retain in-plane freedom. SolidWorks 2014 has a known `sldapiu.dll` access violation. [V1.0.0 historical acceptance](FINAL_ASSESSMENT.md) · [Compatibility](ENVIRONMENT_COMPATIBILITY.md) · [Known limits](OPEN_ITEMS.md)
 
 #### V1.0.0 · Verified evidence
 
@@ -97,7 +98,7 @@ Checks drawing dimension chains, repeated spans, sheet bounds and BOM-to-balloon
 
 ## Installation and use
 
-Download and extract the official ZIP from [V1.0.0 Release](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0).
+Download the installation ZIP from [V1.0.0 stable](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) or [V1.0.1-RC1 pre-release](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.1-rc.1). Verify the SHA-256 on the release page before extracting. For SW2026 testing, choose a new destination and retain your previous installation. [SW2026 retest guide](docs/ISSUE_2_SW2026_RETEST.md)
 
 Use Windows x64, Python 3.12+, Windows PowerShell 5.1 and a licensed SolidWorks installation. Open an empty SolidWorks session and run these commands from the extracted bundle. Choose a new local destination.
 
@@ -106,7 +107,7 @@ python -B scripts/v03_jobs.py --preflight
 powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File .\scripts\Install-SolidWorksSkill.ps1 -Destination 'D:\OmniSolidWorks' -Smoke
 ```
 
-If Python is outside PATH, pass its full path with `-Python`. With multiple sessions, use `SOLIDWORKS_TARGET_PID` to select an empty one. To uninstall, back up any needed `outputs` and remove the standalone installation directory. [Skill](SKILL.md) · [Workflow](docs/V03_GUIDE.md) · [Explode guide](docs/EXPLODED_VIEW_GUIDE.md) · [Security](SECURITY_AUDIT.md) · [Release notes](RELEASE_NOTES.md)
+If Python is outside PATH, pass its full path with `-Python`. With multiple sessions, use `SOLIDWORKS_TARGET_PID` to select an empty one. To uninstall, back up any needed `outputs` and remove the standalone installation directory. [Skill](SKILL.md) · [Workflow](docs/V03_GUIDE.md) · [Explode guide](docs/EXPLODED_VIEW_GUIDE.md) · [Patch security audit](FINAL_SECURITY_AUDIT.md) · [Release notes](RELEASE_NOTES.md)
 
 ## Official technical community
 

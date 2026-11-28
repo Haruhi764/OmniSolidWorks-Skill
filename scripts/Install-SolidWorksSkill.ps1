@@ -43,8 +43,8 @@ if (-not $pythonCommand) { throw 'Python was not found. Set -Python to the full 
 $pythonExe = $pythonCommand.Source
 $windowsPowerShell = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
 if (-not (Test-Path -LiteralPath $windowsPowerShell -PathType Leaf)) { throw 'Windows PowerShell 5.1 is missing from System32.' }
-& $pythonExe -B -c 'import sys, winreg; sys.exit(0 if sys.version_info >= (3, 12) and sys.maxsize > 2**32 else 1)'
-if ($LASTEXITCODE -ne 0) { throw 'Python 3.12+ for Windows x64 is required.' }
+$pythonVersion = & $pythonExe -B -c 'import sys; print(sys.version.split()[0]); sys.exit(0 if sys.version_info >= (3, 12) and sys.maxsize > 2**32 else 1)'
+if ($LASTEXITCODE -ne 0) { throw "Detected Python $pythonVersion. Install Windows x64 Python 3.12+ and pass its executable path via -Python." }
 $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 foreach ($row in $manifest.files) {
     $relative = [string]$row.path

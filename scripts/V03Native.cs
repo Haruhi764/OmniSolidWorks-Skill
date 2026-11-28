@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Web.Script.Serialization;
 using SolidWorks.Interop.sldworks;
 
@@ -118,6 +119,7 @@ public sealed partial class V03Native
         }
         if (app.GetDocumentCount() != 0 || !(bool)evidence["preferencesRestored"])
             throw new InvalidOperationException("The original SolidWorks job session state was not restored.");
+        if (evidence.Contains("nativeOpen")) VerifyNativeFile();
         evidence["stage"] = "complete";
     }
 
@@ -404,39 +406,8 @@ public sealed partial class V03Native
             for (int axis = 0; axis < 3; axis++)
                 Near(actualBounds[side][axis], targetBounds[side][axis], DimensionTolerance, "solid bound");
         var holes = new ArrayList();
-        foreach (IFace2 face in Items(body.GetFaces()).Cast<IFace2>())
-        {
-            var surface = (ISurface)face.GetSurface();
-            if (!surface.IsCylinder()) continue;
-            double[] cylinder = Vector(surface.CylinderParams);
-            if (Math.Abs(Math.Abs(cylinder[5]) - 1) > 1e-6) continue;
-            var ends = new List<double>();
-            foreach (IEdge edge in Items(face.GetEdges()).Cast<IEdge>())
-            {
-                var curve = (ICurve)edge.GetCurve();
-                if (curve.IsCircle())
-                {
-                    double end = Mm(Vector(curve.CircleParams)[2]);
-                    if (!ends.Any(value => Math.Abs(value - end) <= DimensionTolerance)) ends.Add(end);
-                }
-            }
-            if (ends.Count == 2)
-                holes.Add(new Hashtable { {"center", new[] { Mm(cylinder[0]), Mm(cylinder[1]) }},
-                    {"diameter", Mm(2 * cylinder[6])}, {"z", new[] { ends.Min(), ends.Max() }} });
-        }
-        foreach (IDictionary target in Items(expected["cylinders"]))
-        {
-            var point = Vector(target["center"]);
-            var z = Vector(target["z"]);
-            int found = holes.Cast<IDictionary>().Count(candidate => {
-                var center = Vector(candidate["center"]);
-                var ends = Vector(candidate["z"]);
-                return Close(center[0], point[0]) && Close(center[1], point[1]) && Close(Number(candidate, "diameter"), Number(target, "diameter")) &&
-                    Close(ends[0], z[0]) && Close(ends[1], z[1]);
-            });
-            if (found != 1)
-                throw new InvalidOperationException("Did not find the expected circular boundaries at " + point[0] + ", " + point[1]);
-        }
+        if (Items(expected["cylinders"]).Any())
+            holes = VerifyCylinders(body, expected["cylinders"]);
         var result = new Hashtable { {"verified", true}, {"volumeMm3", volume}, {"boundsMm", actualBounds},
             {"solids", 1}, {"bodyCheckCode", code}, {"cylinders", holes} };
         if (expected.Contains("centroid_mm"))
@@ -594,13 +565,48 @@ public sealed partial class V03Native
         if (app.GetOpenDocumentByName(path) != null)
             throw new InvalidOperationException("Reopen proof requires a closed artifact.");
         int errors = 0, warnings = 0;
+        var file = key == "nativeOpen" ? ReadNativeFile(path) : null;
         calls.Add("OpenDoc6");
         var doc = (IModelDoc2)app.OpenDoc6(path, kind, Silent | (readOnly ? ReadOnly : 0), "", ref errors, ref warnings);
-        evidence[key] = new Hashtable { {"path", path}, {"ok", doc != null}, {"errors", errors}, {"warnings", warnings} };
         if (doc != null) Own(doc);
-        if (doc == null || errors != 0 || (warnings & ~allowedWarnings) != 0 || !String.Equals(doc.GetPathName(), path, StringComparison.OrdinalIgnoreCase))
-            throw new IOException("Native open failed: " + errors + "/" + warnings + ", " + Path.GetFileName(path));
+        int actualType = doc == null ? 0 : doc.GetType();
+        var opened = new Hashtable { {"path", path}, {"ok", doc != null}, {"errors", errors},
+            {"warnings", warnings}, {"documentType", actualType} };
+        evidence[key] = opened;
+        if (doc == null || actualType != kind || errors != 0 || (warnings & ~allowedWarnings) != 0 ||
+            !String.Equals(doc.GetPathName(), path, StringComparison.OrdinalIgnoreCase))
+            throw new IOException("Native open failed: " + errors + "/" + warnings + ", type " + actualType +
+                " (expected " + kind + "), " + Path.GetFileName(path));
+        if (file != null)
+        {
+            file["documentType"] = actualType;
+            opened["fileBeforeReopen"] = file;
+        }
         return doc;
+    }
+
+    private static Hashtable ReadNativeFile(string path)
+    {
+        using (var file = File.OpenRead(path))
+        using (var hash = SHA256.Create())
+        {
+            if (file.Length == 0) throw new IOException("Empty native artifact: " + Path.GetFileName(path));
+            return new Hashtable { {"name", Path.GetFileName(path)}, {"bytes", file.Length},
+                {"sha256", BitConverter.ToString(hash.ComputeHash(file)).Replace("-", "").ToLowerInvariant()} };
+        }
+    }
+
+    private void VerifyNativeFile()
+    {
+        var opened = Child(evidence, "nativeOpen");
+        var before = Child(opened, "fileBeforeReopen");
+        string path = Text(opened, "path");
+        var after = ReadNativeFile(path);
+        if (!String.Equals(Text(Child(evidence, "nativeSave"), "path"), path, StringComparison.OrdinalIgnoreCase) ||
+            !Object.Equals(before["bytes"], after["bytes"]) || !Object.Equals(before["sha256"], after["sha256"]))
+            throw new IOException("Native artifact changed during reopen verification: " + Path.GetFileName(path));
+        after["documentType"] = opened["documentType"];
+        evidence["nativeFile"] = after;
     }
 
     private void Activate(IModelDoc2 doc)
