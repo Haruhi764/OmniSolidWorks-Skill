@@ -20,6 +20,12 @@ A SolidWorks automation skill for Codex, using local COM/API to create parametri
 
 [Download V1.0.0](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) · [Quick start](#installation-and-use) · [Portfolio](#mechanical-portfolio) · [Evidence](#evidence-driven)
 
+## Automatic Modeling Demo
+
+<p align="center"><img src="assets/brand/omnisw-modeling-demo.gif" alt="OmniSolidWorks automatic modeling: sketch, dimensions, extrusion and hole features" width="100%"></p>
+
+<p align="center"><sub>Concept animation of the parametric modeling workflow, not live SolidWorks footage. See the mechanical portfolio for actual native outputs.</sub></p>
+
 ## Core Capabilities
 
 | 01 / MODEL | 02 / ASSEMBLE | 03 / VERIFY |

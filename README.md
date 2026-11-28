@@ -20,6 +20,12 @@
 
 [下载正式版](https://github.com/Haruhi764/OmniSolidWorks-Skill/releases/tag/v1.0.0) · [快速安装](#安装与使用) · [工程案例](#工程案例--mechanical-portfolio) · [证据驱动](#证据驱动--evidence-driven)
 
+## 自动建模演示
+
+<p align="center"><img src="assets/brand/omnisw-modeling-demo.gif" alt="OmniSolidWorks 自动建模：草图、尺寸、拉伸与孔特征" width="100%"></p>
+
+<p align="center"><sub>参数化建模流程概念动画，非 SolidWorks 实机录屏。真实输出与验证记录见下方工程案例。</sub></p>
+
 ## 核心能力 · Core Capabilities
 
 | 01 / MODEL · 建模 | 02 / ASSEMBLE · 装配 | 03 / VERIFY · 验证 |
